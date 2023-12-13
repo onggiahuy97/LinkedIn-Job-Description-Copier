@@ -17,7 +17,7 @@ This Chrome extension allows users to quickly view years of experience required 
 ## Example
 Below is an example of how the Quick Experience badge appears on a LinkedIn job posting:
 
-![Quick Experience Badge Example](Screenshot_2023-12-12_at_8.13.14_PM.png)
+![Quick Experience Badge Example](sample.png)
 
 ---
 
