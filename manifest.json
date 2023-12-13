@@ -3,7 +3,6 @@
     "name": "LinkedIn Job Description Copier",
     "version": "1.0",
     "permissions": [
-      "activeTab",
       "clipboardWrite"
     ],
     "background": {
@@ -15,7 +14,7 @@
     },
     "content_scripts": [
       {
-        "matches": ["*://www.linkedin.com/*"],
+        "matches": ["*://www.linkedin.com/jobs/*"],
         "js": ["content.js"]
       }
     ]
