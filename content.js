@@ -66,7 +66,7 @@ function getExperience(jobDetails) {
         var regex = /((\d+)(\+?)|(\d+-\d+))\s*years?/g;
         var matches = element.innerText.match(regex);
         if (matches) {
-            console.log(element.innerText);
+            // console.log(element.innerText);
             experiences.push(element.innerText);
         }
     });
@@ -74,81 +74,65 @@ function getExperience(jobDetails) {
     return experiences;
 }
 
-window.addEventListener('load', function () {
+function findJobDetails() {
     const jobDetails = document.getElementById('job-details');
-    if (jobDetails) {
-        console.log('Job details found:', jobDetails);
+    const target = jobDetails.querySelector('h2');
+    if (jobDetails && target) {
 
-        // Debounce function to limit the number of times the observer is called
-        let debounceTimeout;
-        const debounceDelay = 500;
+        // Create a new button element
+        const newButton = createCopyButton(jobDetails);
 
-        const debouncedLog = () => {
-            if (debounceTimeout) {
-                this.clearTimeout(debounceTimeout);
+        var experiences = getExperience(jobDetails);
+        var ul = document.createElement('ul');
+
+        if (experiences.length > 0) {
+            // create a ul element to store the experiences
+            ul.id = 'ul-experiences'
+            for (var i = 0; i < experiences.length; i++) {
+                var li = document.createElement('li');
+
+                // add bullet points to each li
+                li.style.listStyleType = 'disc';
+                li.appendChild(document.createTextNode(experiences[i]));
+                ul.appendChild(li);
             }
 
-            debounceTimeout = this.setTimeout(() => {
-                console.log('Job details changes are now stable');
-                // Locate the target <h2> element "About this job"
-                const target = jobDetails.querySelector('h2');
-                if (target) {
+            // add corner radius with border for ul 
+            ul.style.border = '1.5px solid #0073b1';
+            ul.style.borderRadius = '15px';
+            ul.style.padding = '10px 15px';
+            ul.style.marginTop = '10px';
+            ul.style.marginBottom = '10px';
+            ul.style.listStyleType = 'none';
 
-                    // Create a new button element
-                    const newButton = createCopyButton(jobDetails);
+            // insert ul below the button 
 
-                    var experiences = getExperience(jobDetails);
-                    var ul = document.createElement('ul');
-
-                    if (experiences.length > 0) {
-                        // create a ul element to store the experiences
-                        ul.id = 'ul-experiences'
-                        for (var i = 0; i < experiences.length; i++) {
-                            var li = document.createElement('li');
-            
-                            // add bullet points to each li
-                            li.style.listStyleType = 'disc';
-                            li.appendChild(document.createTextNode(experiences[i]));
-                            ul.appendChild(li);
-                        }
-            
-                        // add corner radius with border for ul 
-                        ul.style.border = '1.5px solid #0073b1';
-                        ul.style.borderRadius = '15px';
-                        ul.style.padding = '10px 15px';
-                        ul.style.marginTop = '10px';
-                        ul.style.marginBottom = '10px';
-                        ul.style.listStyleType = 'none';
-            
-                        // insert ul below the button 
-
-                    }
+        }
 
 
-                    // Insert the new button before the target element
-                    target.parentNode.insertBefore(newButton, target);
-                    target.parentNode.insertBefore(ul, target);
-
-                }
-
-            }, debounceDelay);
-        };
-
-        // Add Observer to detect when the job details change
-        const observer = new MutationObserver(function (mutations) {
-            var button = document.getElementById('copy-button');
-            if (button) {
-                button.remove();
-            }
-            var ul = document.getElementById('ul-experiences');
-            if (ul) {
-                ul.remove();
-            }
-            debouncedLog();
-        });
-
-        // Start observing the target node for configured mutations
-        observer.observe(jobDetails, { attributes: true, childList: false, subtree: false });
+        // Insert the new button before the target element
+        target.parentNode.insertBefore(newButton, target);
+        target.parentNode.insertBefore(ul, target);
 
     }
-})
+}
+
+const titleObserver = new MutationObserver(function (mutations) {
+    // Check if the URL contains 'jobs' and 'id' in url not null 
+    // For example https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3774816748
+    let url = window.location.href.toLowerCase();
+    if (url.includes('jobs') && url.includes('id') && document.readyState === 'complete') {
+        var button = document.getElementById('copy-button');
+        if (button) {
+            button.remove();
+        }
+        var ul = document.getElementById('ul-experiences');
+        if (ul) {
+            ul.remove();
+        }
+
+        findJobDetails();
+    }
+});
+
+titleObserver.observe(document.querySelector('title'), { childList: true });
